@@ -38,6 +38,11 @@
         <input asp-for="Product.Category" class="form-control" />
         <span asp-validation-for="Product.Category" class="text-danger"></span>
     </div>
+    <div class="form-group">
+        <label asp-for="Product.Description"></label>
+        <input asp-for="Product.Description" class="form-control" />
+    </div>
+
 
     <button type="submit" class="btn btn-primary">Save</button> |
     <a asp-page="./Index" class="btn btn-secondary">Back</a>
