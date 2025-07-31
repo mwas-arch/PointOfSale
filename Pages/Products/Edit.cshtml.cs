@@ -1,77 +1,63 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Data;
 using PointOfSale.Models;
+using System.Threading.Tasks;
 
 namespace PointOfSale.Pages_Products
 {
-    public class EditModel : PageModel
-    {
-        private readonly PointOfSale.Data.ApplicationDbContext _context;
+	public class EditModel : PageModel
+	{
+		private readonly ApplicationDbContext _context;
 
-        public EditModel(PointOfSale.Data.ApplicationDbContext context)
-        {
-            _context = context;
-        }
+		public EditModel(ApplicationDbContext context)
+		{
+			_context = context;
+		}
 
-        [BindProperty]
-        public Product Product { get; set; } = default!;
+		[BindProperty]
+		public Product Product { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+		public async Task<IActionResult> OnGetAsync(int? id)
+		{
+			if (id == null)
+				return NotFound();
 
-            var product =  await _context.Products.FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            Product = product;
-            return Page();
-        }
+			Product = await _context.Products.FindAsync(id);
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+			if (Product == null)
+				return NotFound();
 
-            _context.Attach(Product).State = EntityState.Modified;
+			return Page();
+		}
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(Product.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+		public async Task<IActionResult> OnPostAsync()
+		{
+			if (!ModelState.IsValid)
+				return Page();
 
-            return RedirectToPage("./Index");
-        }
+			// Load existing product from database
+			var productInDb = await _context.Products.FindAsync(Product.Id);
+			if (productInDb == null)
+				return NotFound();
 
-        private bool ProductExists(int id)
-        {
-            return _context.Products.Any(e => e.Id == id);
-        }
-    }
+			// Update fields
+			productInDb.Name = Product.Name;
+			productInDb.CostPrice = Product.CostPrice;
+			productInDb.SellingPrice = Product.SellingPrice;
+			productInDb.Stock = Product.Stock;
+			productInDb.Category = Product.Category;
+
+			await _context.SaveChangesAsync();
+
+			return RedirectToPage("./Index");
+		}
+
+
+		private bool ProductExists(int id)
+		{
+			return _context.Products.Any(e => e.Id == id);
+		}
+	}
 }

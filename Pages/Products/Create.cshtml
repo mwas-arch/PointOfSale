@@ -19,9 +19,14 @@
                 <span asp-validation-for="Product.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Product.Price" class="control-label"></label>
-                <input asp-for="Product.Price" class="form-control" />
-                <span asp-validation-for="Product.Price" class="text-danger"></span>
+                <label asp-for="Product.CostPrice" class="control-label"></label>
+                <input asp-for="Product.CostPrice" class="form-control" />
+                <span asp-validation-for="Product.CostPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Product.SellingPrice" class="control-label"></label>
+                <input asp-for="Product.SellingPrice" class="form-control" />
+                <span asp-validation-for="Product.SellingPrice" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Product.Stock" class="control-label"></label>

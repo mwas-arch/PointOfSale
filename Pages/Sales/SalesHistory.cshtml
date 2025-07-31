@@ -1,0 +1,33 @@
+﻿@page
+@model SalesHistoryModel
+@{
+    ViewData["Title"] = "Sales History";
+}
+
+<h2>Sales History</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Sale ID</th>
+            <th>Customer</th>
+            <th>Phone</th>
+            <th>Salesperson</th>
+            <th>Date</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var sale in Model.Sales)
+        {
+            <tr>
+                <td>@sale.Id</td>
+                <td>@sale.CustomerName</td>
+                <td>@sale.CustomerPhone</td>
+                <td>@sale.User?.UserName</td>
+                <td>@sale.SaleDate.ToString("g")</td>
+                <td>Ksh @sale.SaleItems.Sum(i => i.Quantity * i.UnitPrice)</td>
+            </tr>
+        }
+    </tbody>
+</table>

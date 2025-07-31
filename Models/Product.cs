@@ -11,7 +11,9 @@ namespace PointOfSale.Models
 		public string Name { get; set; }
 
 		[Range(0.01, 100000)]
-		public decimal Price { get; set; }
+		public decimal CostPrice { get; set; }
+		[Range(0.01, 100000)]
+		public decimal SellingPrice { get; set; }
 
 		[Range(0, 100000)]
 		public int Stock { get; set; }

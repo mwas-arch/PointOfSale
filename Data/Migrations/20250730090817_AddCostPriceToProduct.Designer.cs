@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PointOfSale.Data;
 
@@ -11,9 +12,11 @@ using PointOfSale.Data;
 namespace PointOfSale.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250730090817_AddCostPriceToProduct")]
+    partial class AddCostPriceToProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,6 +246,7 @@ namespace PointOfSale.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("SellingPrice")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Stock")
@@ -253,7 +257,7 @@ namespace PointOfSale.Data.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("PointOfSale.Models.Sale", b =>
+            modelBuilder.Entity("Sale", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -261,29 +265,27 @@ namespace PointOfSale.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CustomerPhone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("SaleDate")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
+                    b.Property<decimal>("Profit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("SalespersonId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("SalespersonId");
 
                     b.ToTable("Sales");
                 });
 
-            modelBuilder.Entity("PointOfSale.Models.SaleItem", b =>
+            modelBuilder.Entity("SaleItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -301,7 +303,6 @@ namespace PointOfSale.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -364,18 +365,18 @@ namespace PointOfSale.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PointOfSale.Models.Sale", b =>
+            modelBuilder.Entity("Sale", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Salesperson")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("SalespersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Salesperson");
                 });
 
-            modelBuilder.Entity("PointOfSale.Models.SaleItem", b =>
+            modelBuilder.Entity("SaleItem", b =>
                 {
                     b.HasOne("PointOfSale.Models.Product", "Product")
                         .WithMany()
@@ -383,7 +384,7 @@ namespace PointOfSale.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PointOfSale.Models.Sale", "Sale")
+                    b.HasOne("Sale", "Sale")
                         .WithMany("SaleItems")
                         .HasForeignKey("SaleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -394,7 +395,7 @@ namespace PointOfSale.Data.Migrations
                     b.Navigation("Sale");
                 });
 
-            modelBuilder.Entity("PointOfSale.Models.Sale", b =>
+            modelBuilder.Entity("Sale", b =>
                 {
                     b.Navigation("SaleItems");
                 });

@@ -1,0 +1,130 @@
+﻿@page
+@model CreateModel
+@{
+    ViewData["Title"] = "New Sale";
+}
+
+<h2>New Sale</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+
+<form method="post" onsubmit="return prepareCartData()">
+    <div class="form-group">
+        <label>Customer Name</label>
+        <input asp-for="CustomerName" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label>Customer Phone</label>
+        <input asp-for="CustomerPhone" class="form-control" required />
+    </div>
+
+    <hr />
+
+    <h4>Available Products</h4>
+    <table class="table table-bordered" id="productListTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Selling Price</th>
+                <th>Stock</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Products)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>Ksh @product.SellingPrice</td>
+                    <td>@product.Stock</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-success" onclick="promptAddToCart(@product.Id, '@product.Name', @product.SellingPrice)">Add</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <hr />
+    <h4>Cart</h4>
+    <table class="table" id="cartTable">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Subtotal</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h5>Total: Ksh <span id="cartTotal">0.00</span></h5>
+
+    <input type="hidden" name="CartItemsJson" id="cartItemsJson" />
+
+    <button type="submit" class="btn btn-primary">Checkout</button>
+</form>
+
+@section Scripts {
+    <script>
+        const cart = [];
+
+        function promptAddToCart(productId, productName, unitPrice) {
+            const quantity = parseInt(prompt(`Enter quantity for ${productName}:`));
+
+            if (!quantity || quantity <= 0) return;
+
+            const existing = cart.find(i => i.ProductId == productId);
+            if (existing) {
+                existing.Quantity += quantity;
+            } else {
+                cart.push({ ProductId: productId, ProductName: productName, UnitPrice: unitPrice, Quantity: quantity });
+            }
+
+            renderCart();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            renderCart();
+        }
+
+        function renderCart() {
+            const tbody = document.querySelector('#cartTable tbody');
+            const total = cart.reduce((sum, item) => sum + item.UnitPrice * item.Quantity, 0);
+            document.getElementById('cartTotal').textContent = total.toFixed(2);
+
+            tbody.innerHTML = '';
+            cart.forEach((item, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.ProductName}</td>
+                        <td>${item.Quantity}</td>
+                        <td>${item.UnitPrice}</td>
+                        <td>${(item.Quantity * item.UnitPrice).toFixed(2)}</td>
+                        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeFromCart(${index})">X</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function prepareCartData() {
+            const formattedCart = cart.map(i => ({
+                ProductId: i.ProductId,
+                Quantity: i.Quantity,
+                UnitPrice: i.UnitPrice
+            }));
+
+            document.getElementById('cartItemsJson').value = JSON.stringify(formattedCart);
+            return true;
+        }
+    </script>
+}

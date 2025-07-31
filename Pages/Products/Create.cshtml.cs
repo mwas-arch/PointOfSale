@@ -7,10 +7,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PointOfSale.Data;
 using PointOfSale.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PointOfSale.Pages_Products
 {
-    public class CreateModel : PageModel
+	
+
+	[Authorize(Roles = "SuperAdmin,StoreOwner")]
+	public class CreateModel : PageModel
     {
         private readonly PointOfSale.Data.ApplicationDbContext _context;
 

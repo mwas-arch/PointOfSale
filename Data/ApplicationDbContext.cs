@@ -13,15 +13,35 @@ namespace PointOfSale.Data
 
 		// ✅ DbSet must go inside the class register
 		public DbSet<Product> Products { get; set; }
+		public DbSet<Sale> Sales { get; set; }
+		public DbSet<SaleItem> SaleItems { get; set; }
+
+
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
 
-			// ✅ Set precision for decimal
 			modelBuilder.Entity<Product>()
-						.Property(p => p.Price)
-						.HasPrecision(18, 2);
+				.Property(p => p.CostPrice)
+				.HasColumnType("decimal(18,2)");
+
+			modelBuilder.Entity<Product>()
+				.Property(p => p.SellingPrice)
+				.HasColumnType("decimal(18,2)");
+
+			
+
+			modelBuilder.Entity<SaleItem>()
+				.Property(s => s.UnitPrice)
+				.HasPrecision(18, 2); // 18 total digits, 2 after decimal
+
+
+
+
+
+
 		}
+
 	}
 }
