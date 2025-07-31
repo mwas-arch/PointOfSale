@@ -17,8 +17,9 @@ public class SalesHistoryModel : PageModel
 	public async Task OnGetAsync()
 	{
 		Sales = await _context.Sales
-			.Include(s => s.User)
 			.Include(s => s.SaleItems)
+				.ThenInclude(si => si.Product)
+			.OrderByDescending(s => s.SaleDate)
 			.ToListAsync();
 	}
 }

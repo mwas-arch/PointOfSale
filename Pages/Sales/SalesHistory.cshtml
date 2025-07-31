@@ -1,33 +1,47 @@
 ﻿@page
 @model SalesHistoryModel
 @{
-    ViewData["Title"] = "Sales History";
+	ViewData["Title"] = "Sales History";
 }
 
 <h2>Sales History</h2>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Sale ID</th>
-            <th>Customer</th>
-            <th>Phone</th>
-            <th>Salesperson</th>
-            <th>Date</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var sale in Model.Sales)
-        {
-            <tr>
-                <td>@sale.Id</td>
-                <td>@sale.CustomerName</td>
-                <td>@sale.CustomerPhone</td>
-                <td>@sale.User?.UserName</td>
-                <td>@sale.SaleDate.ToString("g")</td>
-                <td>Ksh @sale.SaleItems.Sum(i => i.Quantity * i.UnitPrice)</td>
-            </tr>
-        }
-    </tbody>
-</table>
+@foreach (var sale in Model.Sales)
+{
+	<div class="card mb-3">
+		<div class="card-header bg-light">
+			<strong>Sale ID:</strong> @sale.Id |
+			<strong>Customer:</strong> @sale.CustomerName |
+			<strong>Phone:</strong> @sale.CustomerPhone |
+			<strong>Salesperson:</strong> @sale.User?.UserName |
+			<strong>Date:</strong> @sale.SaleDate.ToString("g")
+		</div>
+		<div class="card-body">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th>Product</th>
+						<th>Quantity</th>
+						<th>Unit Price</th>
+						<th>Subtotal</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var item in sale.SaleItems)
+					{
+						<tr>
+							<td>@item.Product?.Name</td>
+							<td>@item.Quantity</td>
+							<td>Ksh @item.UnitPrice.ToString("F2")</td>
+							<td>Ksh @((item.Quantity* item.UnitPrice).ToString("F2"))</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+
+			<p class="text-end">
+				<strong>Total: Ksh @(sale.SaleItems.Sum(i => i.Quantity * i.UnitPrice).ToString("F2"))</strong>
+			</p>
+		</div>
+	</div>
+}
