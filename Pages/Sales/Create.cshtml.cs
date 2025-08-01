@@ -5,9 +5,14 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using PointOfSale.Data;
 using PointOfSale.Models;
+using Microsoft.AspNetCore.Authorization;
 
+[Authorize(Roles = "SuperAdmin,SalesPerson,StoreOwner")]
 public class CreateModel : PageModel
 {
+	[BindProperty(SupportsGet = true)]
+	public string SearchTerm { get; set; }
+
 	private readonly ApplicationDbContext _context;
 	private readonly UserManager<IdentityUser> _userManager;
 
@@ -30,9 +35,19 @@ public class CreateModel : PageModel
 
 	public async Task<IActionResult> OnGetAsync()
 	{
-		Products = await _context.Products.ToListAsync();
+		var query = _context.Products.AsQueryable();
+
+		if (!string.IsNullOrWhiteSpace(SearchTerm))
+		{
+			query = query.Where(p =>
+				p.Name.Contains(SearchTerm) ||
+				p.Description.Contains(SearchTerm));
+		}
+
+		Products = await query.ToListAsync();
 		return Page();
 	}
+
 
 	public async Task<IActionResult> OnPostAsync()
 	{
@@ -79,7 +94,7 @@ public class CreateModel : PageModel
 		}
 
 		_context.Sales.Add(sale);
-	
+
 
 		await _context.SaveChangesAsync();
 

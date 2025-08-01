@@ -11,9 +11,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+
+
 
 namespace PointOfSale.Pages.Reports
 {
+	[Authorize(Roles = "SuperAdmin,StoreOwner")]
 	public class ProfitAndLossModel : PageModel
 	{
 		private readonly ApplicationDbContext _context;

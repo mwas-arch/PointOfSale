@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PointOfSale")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e6828139cbc4eaebb43a804286cbec284169ac28")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+651aeb9959aafa59aa6e0d46fc9fe2d8eb3df11d")]
 [assembly: System.Reflection.AssemblyProductAttribute("PointOfSale")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PointOfSale")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

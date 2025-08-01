@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Data;
 using PointOfSale.Models;
+using Microsoft.AspNetCore.Authorization;
+
+[Authorize(Roles = "SuperAdmin,,StoreOwner")]
 
 public class SalesHistoryModel : PageModel
 {

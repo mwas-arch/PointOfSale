@@ -13,6 +13,13 @@
     </div>
 }
 
+<!-- ✅ Search Form - Separate GET form -->
+<form method="get" class="mb-3">
+    <input type="text" name="SearchTerm" value="@Model.SearchTerm" placeholder="Search products..." />
+    <button type="submit">Search</button>
+</form>
+
+<!-- ✅ Main Sales Form - POST -->
 <form method="post" onsubmit="return prepareCartData()">
     <div class="form-group">
         <label>Customer Name</label>
@@ -27,10 +34,11 @@
     <hr />
 
     <h4>Available Products</h4>
+
     <table class="table table-bordered" id="productListTable">
         <thead>
             <tr>
-                <th>Name</th>
+                <th>Product Name</th>
                 <th>Description</th>
                 <th>Selling Price</th>
                 <th>Stock</th>
@@ -81,7 +89,6 @@
 
         function promptAddToCart(productId, productName, unitPrice) {
             const quantity = parseInt(prompt(`Enter quantity for ${productName}:`));
-
             if (!quantity || quantity <= 0) return;
 
             const existing = cart.find(i => i.ProductId == productId);
