@@ -1,4 +1,58 @@
 ﻿@page
-@model PointOfSale.Pages.Reports.ProfitAndLossModel
+@model ProfitAndLossModel
 @{
+    ViewData["Title"] = "Profit and Loss Report";
+}
+
+<h2>Profit and Loss Report</h2>
+
+<form method="post">
+    <label>From:</label>
+    <input type="date" asp-for="FromDate" />
+    <label>To:</label>
+    <input type="date" asp-for="ToDate" />
+    <button type="submit">Generate Report</button>
+</form>
+
+<form method="post" asp-page-handler="ExportPdf">
+    <input type="hidden" asp-for="FromDate" />
+    <input type="hidden" asp-for="ToDate" />
+    <button type="submit" class="btn btn-danger">Export to PDF</button>
+</form>
+
+<form method="post" asp-page-handler="ExportCsv">
+    <button type="submit" class="btn btn-outline-primary">Export CSV</button>
+</form>
+
+
+
+
+@if (Model.ReportItems != null)
+{
+    <h3>Summary</h3>
+    <p><strong>Total Revenue:</strong> Ksh @Model.TotalRevenue</p>
+    <p><strong>Total Cost:</strong> Ksh @Model.TotalCost</p>
+    <p><strong>Total Profit:</strong> Ksh @Model.TotalProfit</p>
+
+    <h3>Detailed Breakdown</h3>
+    <table class="table">
+        <thead>
+            <tr><th>Date</th><th>Product</th><th>Qty</th><th>Buying Price</th><th>Selling Price</th><th>Revenue</th><th>Cost</th><th>Profit</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ReportItems)
+            {
+                <tr>
+                    <td>@item.SaleDate.ToShortDateString()</td>
+                    <td>@item.ProductName</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.BuyingPrice</td>
+                    <td>@item.SellingPrice</td>
+                    <td>@item.Revenue</td>
+                    <td>@item.Cost</td>
+                    <td>@item.Profit</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }

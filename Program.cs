@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PointOfSale.Data;
 
+
 namespace PointOfSale
 {
 	public class Program
 	{
+		
 		public static async Task Main(string[] args) // ? Make Main async
 		{
 			var builder = WebApplication.CreateBuilder(args);
