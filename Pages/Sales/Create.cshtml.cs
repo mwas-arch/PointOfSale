@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -5,14 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using PointOfSale.Data;
 using PointOfSale.Models;
-using Microsoft.AspNetCore.Authorization;
 
 [Authorize(Roles = "SuperAdmin,SalesPerson,StoreOwner")]
 public class CreateModel : PageModel
 {
-	[BindProperty(SupportsGet = true)]
-	public string SearchTerm { get; set; }
-
 	private readonly ApplicationDbContext _context;
 	private readonly UserManager<IdentityUser> _userManager;
 
@@ -21,6 +18,9 @@ public class CreateModel : PageModel
 		_context = context;
 		_userManager = userManager;
 	}
+
+	[BindProperty(SupportsGet = true)]
+	public string SearchTerm { get; set; }
 
 	public List<Product> Products { get; set; }
 
@@ -40,34 +40,51 @@ public class CreateModel : PageModel
 		if (!string.IsNullOrWhiteSpace(SearchTerm))
 		{
 			query = query.Where(p =>
-				p.Name.Contains(SearchTerm) ||
-				p.Description.Contains(SearchTerm));
+				p.Name.Contains(SearchTerm) || p.Description.Contains(SearchTerm));
 		}
 
 		Products = await query.ToListAsync();
 		return Page();
 	}
 
-
 	public async Task<IActionResult> OnPostAsync()
 	{
-		// Fetch products again so the page can display them even after POST
+		// Load Products for redisplay if needed
 		Products = await _context.Products.ToListAsync();
 
-		if (!ModelState.IsValid) return Page();
+		if (!ModelState.IsValid)
+		{
+			ModelState.AddModelError("", "Form is invalid.");
+			return Page();
+		}
 
-		var cartItems = JsonConvert.DeserializeObject<List<SaleItem>>(CartItemsJson);
-		if (cartItems == null || !cartItems.Any())
+		if (string.IsNullOrWhiteSpace(CartItemsJson))
 		{
 			ModelState.AddModelError("", "Cart is empty.");
-			return Page(); // Products will now not be null
+			return Page();
+		}
+
+		List<CartItemDto> cartItems;
+		try
+		{
+			cartItems = JsonConvert.DeserializeObject<List<CartItemDto>>(CartItemsJson);
+		}
+		catch
+		{
+			ModelState.AddModelError("", "Invalid cart data.");
+			return Page();
+		}
+
+		if (cartItems == null || !cartItems.Any())
+		{
+			ModelState.AddModelError("", "No items in cart.");
+			return Page();
 		}
 
 		var user = await _userManager.GetUserAsync(User);
-
 		var sale = new Sale
 		{
-			UserId = user.Id,
+			UserId = user?.Id,
 			CustomerName = CustomerName,
 			CustomerPhone = CustomerPhone,
 			SaleDate = DateTime.Now,
@@ -76,31 +93,43 @@ public class CreateModel : PageModel
 
 		foreach (var item in cartItems)
 		{
-			var product = await _context.Products.FindAsync(item.ProductId);
-			if (product == null || product.Stock < item.Quantity)
+			var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == item.ProductId);
+			if (product == null)
 			{
-				ModelState.AddModelError("", $"Insufficient stock for {product?.Name ?? "Unknown Product"}.");
-				return Page(); // Products will now not be null
+				ModelState.AddModelError("", $"Product with ID {item.ProductId} not found.");
+				return Page();
 			}
 
-			product.Stock -= item.Quantity;
+			if (product.Stock < item.Quantity)
+			{
+				ModelState.AddModelError("", $"Not enough stock for product '{product.Name}'.");
+				return Page();
+			}
 
+			// Reduce stock
+			product.Stock -= item.Quantity;
+			_context.Products.Update(product);
+
+			// Add sale item
 			sale.SaleItems.Add(new SaleItem
 			{
-				ProductId = item.ProductId,
+				ProductId = product.Id,
 				Quantity = item.Quantity,
 				UnitPrice = item.UnitPrice
 			});
 		}
 
 		_context.Sales.Add(sale);
-
-
 		await _context.SaveChangesAsync();
 
-		TempData["Message"] = "Sale saved successfully!";
+		TempData["Message"] = "Sale completed and stock updated successfully.";
 		return RedirectToPage("/Sales/Create");
-
 	}
 
+	public class CartItemDto
+	{
+		public int ProductId { get; set; }
+		public int Quantity { get; set; }
+		public decimal UnitPrice { get; set; }
+	}
 }

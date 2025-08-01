@@ -20,6 +20,19 @@
 </form>
 
 <!-- ✅ Main Sales Form - POST -->
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var modelError in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@modelError.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+
 <form method="post" onsubmit="return prepareCartData()">
     <div class="form-group">
         <label>Customer Name</label>
@@ -78,7 +91,8 @@
 
     <h5>Total: Ksh <span id="cartTotal">0.00</span></h5>
 
-    <input type="hidden" name="CartItemsJson" id="cartItemsJson" />
+    <input asp-for="CartItemsJson" type="hidden" id="cartItemsJson" />
+
 
     <button type="submit" class="btn btn-primary">Checkout</button>
 </form>
@@ -132,6 +146,7 @@
                 UnitPrice: i.UnitPrice
             }));
 
+            console.log("Submitting Cart:", formattedCart); // ✅ Debug line
             document.getElementById('cartItemsJson').value = JSON.stringify(formattedCart);
             return true;
         }

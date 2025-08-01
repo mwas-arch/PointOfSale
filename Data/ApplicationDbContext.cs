@@ -36,7 +36,17 @@ namespace PointOfSale.Data
 				.Property(s => s.UnitPrice)
 				.HasPrecision(18, 2); // 18 total digits, 2 after decimal
 
+			modelBuilder.Entity<Sale>()
+		.HasMany(s => s.SaleItems)
+		.WithOne(si => si.Sale)
+		.HasForeignKey(si => si.SaleId)
+		.OnDelete(DeleteBehavior.Cascade);
 
+			// ✅ Also add this to ensure SaleItem → Product is valid
+			modelBuilder.Entity<SaleItem>()
+				.HasOne(si => si.Product)
+				.WithMany()
+				.HasForeignKey(si => si.ProductId);
 
 
 
