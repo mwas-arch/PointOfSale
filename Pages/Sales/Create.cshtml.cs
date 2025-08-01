@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -18,8 +19,8 @@ public class CreateModel : PageModel
 		_context = context;
 		_userManager = userManager;
 	}
-
-	[BindProperty(SupportsGet = true)]
+	
+	[BindProperty(SupportsGet = true)]	
 	public string SearchTerm { get; set; }
 
 	public List<Product> Products { get; set; }
@@ -52,11 +53,11 @@ public class CreateModel : PageModel
 		// Load Products for redisplay if needed
 		Products = await _context.Products.ToListAsync();
 
-		if (!ModelState.IsValid)
-		{
-			ModelState.AddModelError("", "Form is invalid.");
-			return Page();
-		}
+		//if (!ModelState.IsValid)
+		//{
+		//	ModelState.AddModelError("", "Form is invalid.");
+		//	return Page();
+		//}
 
 		if (string.IsNullOrWhiteSpace(CartItemsJson))
 		{
@@ -102,9 +103,10 @@ public class CreateModel : PageModel
 
 			if (product.Stock < item.Quantity)
 			{
-				ModelState.AddModelError("", $"Not enough stock for product '{product.Name}'.");
-				return Page();
+				TempData["Message"] = $"Out of stock: {product.Name} (only {product.Stock} left)";
+				return RedirectToPage("/Sales/Create");
 			}
+
 
 			// Reduce stock
 			product.Stock -= item.Quantity;

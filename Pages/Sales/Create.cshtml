@@ -65,7 +65,16 @@
                     <td>@product.Name</td>
                     <td>@product.Description</td>
                     <td>Ksh @product.SellingPrice</td>
-                    <td>@product.Stock</td>
+                    <td>
+                        @if (product.Stock <= 0)
+                        {
+                            <span class="text-danger">Out of Stock</span>
+                        }
+                        else
+                        {
+                            @product.Stock
+                        }
+                    </td>
                     <td>
                         <button type="button" class="btn btn-sm btn-success" onclick="promptAddToCart(@product.Id, '@product.Name', @product.SellingPrice)">Add</button>
                     </td>

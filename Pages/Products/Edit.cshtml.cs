@@ -48,6 +48,7 @@ namespace PointOfSale.Pages_Products
 			productInDb.SellingPrice = Product.SellingPrice;
 			productInDb.Stock = Product.Stock;
 			productInDb.Category = Product.Category;
+			productInDb.Description = Product.Description;
 
 			await _context.SaveChangesAsync();
 
