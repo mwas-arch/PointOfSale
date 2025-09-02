@@ -34,6 +34,10 @@ public class CreateModel : PageModel
 	[BindProperty]
 	public string CartItemsJson { get; set; }
 
+	[BindProperty]
+	public string PaymentMethod { get; set; }
+
+
 	public async Task<IActionResult> OnGetAsync()
 	{
 		var query = _context.Products.AsQueryable();
@@ -89,6 +93,7 @@ public class CreateModel : PageModel
 			CustomerName = CustomerName,
 			CustomerPhone = CustomerPhone,
 			SaleDate = DateTime.Now,
+			PaymentMethod = PaymentMethod,
 			SaleItems = new List<SaleItem>()
 		};
 
@@ -125,7 +130,8 @@ public class CreateModel : PageModel
 		await _context.SaveChangesAsync();
 
 		TempData["Message"] = "Sale completed and stock updated successfully.";
-		return RedirectToPage("/Sales/Create");
+		return RedirectToPage("/Sales/Receipt", new { id = sale.Id });
+
 	}
 
 	public class CartItemDto

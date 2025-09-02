@@ -17,7 +17,9 @@ namespace PointOfSale.Models
 		public DateTime SaleDate { get; set; }
 
 		public List<SaleItem> SaleItems { get; set; } = new();
+		public string PaymentMethod { get; set; }
 
+		
 	}
 
 

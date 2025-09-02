@@ -1,5 +1,9 @@
 ﻿@page
 @model IndexModel
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
 @{
     ViewData["Title"] = "Home page";
 }
@@ -8,18 +12,34 @@
     <h1 class="display-4">Welcome to STARMOUNT POS</h1>
     <p class="lead mt-3">A smarter way to manage sales, stock, and customers.</p>
 
-    <div class="card mt-5 mx-auto" style="max-width: 400px;">
-        <div class="card-body">
-            <h5 class="card-title">Login to Continue</h5>
-            <p class="card-text">
-                Please log in with your account:
-                <ul class="text-start">
-                    <li><strong>SuperAdmin:</strong> Manage the entire system</li>
-                    <li><strong>Store Owner:</strong> Oversee store operations</li>
-                    <li><strong>Salesperson:</strong> Make and manage sales</li>
-                </ul>
-            </p>
-            <a class="btn btn-primary btn-block" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <!-- When logged in -->
+        <div class="card mt-5 mx-auto" style="max-width: 400px;">
+            <div class="card-body">
+                <h5 class="card-title">You are logged in as @UserManager.GetUserName(User)</h5>
+                <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+                    <button type="submit" class="btn btn-danger btn-block">Logout</button>
+                </form>
+            </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <!-- When not logged in -->
+        <div class="card mt-5 mx-auto" style="max-width: 400px;">
+            <div class="card-body">
+                <h5 class="card-title">Login to Continue</h5>
+                <p class="card-text">
+                    Please log in with your account:
+                    <ul class="text-start">
+                        <li><strong>SuperAdmin:</strong> Manage the entire system</li>
+                        <li><strong>Store Owner:</strong> Oversee store operations</li>
+                        <li><strong>Salesperson:</strong> Make and manage sales</li>
+                    </ul>
+                </p>
+                <a class="btn btn-primary btn-block" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            </div>
+        </div>
+    }
 </div>

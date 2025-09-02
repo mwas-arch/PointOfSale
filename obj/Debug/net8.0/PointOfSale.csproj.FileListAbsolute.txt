@@ -313,10 +313,10 @@ C:\Users\mwas\Desktop\pos\PointOfSale\PointOfSale\obj\Debug\net8.0\staticwebasse
 C:\Users\mwas\Desktop\pos\PointOfSale\PointOfSale\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\mwas\Desktop\pos\PointOfSale\PointOfSale\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\mwas\Desktop\pos\PointOfSale\PointOfSale\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\mwas\Desktop\pos\PointOfSale\PointOfSale\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\mwas\Desktop\pos\PointOfSale\PointOfSale\obj\Debug\net8.0\PointOfS.D3BF5851.Up2Date
 C:\Users\mwas\Desktop\pos\PointOfSale\PointOfSale\obj\Debug\net8.0\PointOfSale.dll
 C:\Users\mwas\Desktop\pos\PointOfSale\PointOfSale\obj\Debug\net8.0\refint\PointOfSale.dll
 C:\Users\mwas\Desktop\pos\PointOfSale\PointOfSale\obj\Debug\net8.0\PointOfSale.pdb
 C:\Users\mwas\Desktop\pos\PointOfSale\PointOfSale\obj\Debug\net8.0\PointOfSale.genruntimeconfig.cache
 C:\Users\mwas\Desktop\pos\PointOfSale\PointOfSale\obj\Debug\net8.0\ref\PointOfSale.dll
+C:\Users\mwas\Desktop\pos\PointOfSale\PointOfSale\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
